@@ -23,25 +23,25 @@ meuEmissor.on(nomeEvento, function(click) {
 
 
 //recebe entrada do usuário, espera mudança em um evento especifico
-// const stdin = process.openStdin()
-// stdin.addListener('data', (value) => {
-//     console.log(`Você digitou: ${value.toString().trim()}`)
-// })
+const stdin = process.openStdin()
+stdin.addListener('data', (value) => {
+    console.log(`Você digitou: ${value.toString().trim()}`)
+})
 
 
 
 //não resolver com promise, executa uma única vez
-const stdin = process.openStdin()
-function main() {
-    return new Promise(function (resolve, reject) {
-        stdin.addListener('data', (value) => {
-            // console.log(`Você digitou: ${value.toString().trim()}`)
-            return resolve(value)
-        })
-    })
-}
+// const stdin = process.openStdin()
+// function main() {
+//     return new Promise(function (resolve, reject) {
+//         stdin.addListener('data', (value) => {
+//             // console.log(`Você digitou: ${value.toString().trim()}`)
+//             return resolve(value)
+//         })
+//     })
+// }
 
 
-main().then((resultado) => {
-    console.log('resultado', resultado.toString())
-})
+// main().then((resultado) => {
+//     console.log('resultado', resultado.toString())
+// })
