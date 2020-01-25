@@ -1,4 +1,4 @@
-const ICrud = require('./../interface/interfaceCrud')
+const ICrud = require('../interface/interfaceCrud')
 
 //classe abstratas, que chama os métodos
 class ContextStrategy extends ICrud {
@@ -25,6 +25,10 @@ class ContextStrategy extends ICrud {
 
     isConnected(){
         return this._database.isConnected()
+    }
+
+    connect() {
+        return this._database.connect()
     }
 }
 
