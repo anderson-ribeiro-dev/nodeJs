@@ -9,11 +9,17 @@ const MOCK_HEROI_CADASTRAR = {
     poder: 'flexas'
 }
 
+const MOCK_HEROI_ATUALIZAR = {
+    nome: 'Batman',
+    poder: 'Dinheiro'
+}
+
 
 describe('Postgres Strategy', function () {
     this.timeout(Infinity) //espera conexão, para validar os dados
     this.beforeAll(async function () {
        await context.connect()
+       await context.create(MOCK_HEROI_ATUALIZAR) //cadastrar herois para atualizar
     })
 
     it('PostgresSql Connection', async () => {
@@ -35,5 +41,41 @@ describe('Postgres Strategy', function () {
 
         delete result.id 
         assert.deepEqual(result, MOCK_HEROI_CADASTRAR)
+    });
+
+    it('atualizar', async () => {
+       const [itemAtualizar] = await context.read({ nome: MOCK_HEROI_ATUALIZAR.nome })   //[result] -. pega a primeira posição do array
+       const novoItem = {
+            ...MOCK_HEROI_ATUALIZAR, //espalhar objeto
+            nome: "Mulher Maravilha" //altera a propriedade nome de mock_heroi_atualizar
+       }
+
+       const [result] = await context.update(itemAtualizar.id, novoItem)
+       const [itemAtualizado] = await context.read({ id: itemAtualizar.id })
+
+    //    console.log(result)
+    //    console.log(itemAtualizado)
+       assert.deepEqual(result, 1)
+       assert.deepEqual(itemAtualizado.nome, novoItem.nome)
+       
+
+       /*spread/rest merger/separar objeto
+        {
+            nome: "Batman",
+            poder: "Dinheiro"
+        }
+
+        {
+            dataNascimento: "1998-01-01"
+        }
+
+        final
+        {
+            nome: "Batman",
+            poder: "Dinheiro",
+            dataNascimento: "1998-01-01"
+        }
+       */
+       
     });
 })

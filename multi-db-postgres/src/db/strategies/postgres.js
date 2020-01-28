@@ -58,6 +58,13 @@ class Postgres extends ICrud {
         return this._herois.findAll({where: item,raw: true})
     }
 
+    async update(id, item) {
+        const response = await this._herois.update(item, { where: { id: id } })
+        
+        console.log("response", response)
+        return response
+    }
+
     //método privado
     async connect(){
         this._driver = new Sequelize(

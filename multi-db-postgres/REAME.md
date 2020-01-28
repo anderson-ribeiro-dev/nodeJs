@@ -45,3 +45,7 @@ docker exec -it mongodb mongo --host localhost  -u admin -p senhaadmin --authent
 mocha *.test.js -w
 rm -rf node_modules
 
+##rodar test
+npm run test:watch
+npm start
+
