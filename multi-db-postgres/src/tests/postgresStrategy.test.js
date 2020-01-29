@@ -19,6 +19,7 @@ describe('Postgres Strategy', function () {
     this.timeout(Infinity) //espera conexão, para validar os dados
     this.beforeAll(async function () {
        await context.connect()
+       await context.delete() //limpar base
        await context.create(MOCK_HEROI_ATUALIZAR) //cadastrar herois para atualizar
     })
 
@@ -77,5 +78,11 @@ describe('Postgres Strategy', function () {
         }
        */
        
+    });
+
+    it('remover por id', async () => {
+        const [item] = await context.read({}) //buscar item na base
+        const result = await context.delete(item.id)
+        assert.deepEqual(result, 1)
     });
 })
