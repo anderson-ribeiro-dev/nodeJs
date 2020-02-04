@@ -1,5 +1,9 @@
 ##set DOCKER_HOST=tcp://192.168.1.194:2376
 ##erro de execução
+##restart docker 
+##docker-machine restart
+##verificar container
+##docker ps -a
 
 ##https://medium.com/@fannyvieira/docker-basic-comands-7e5da6dec6d1
 
