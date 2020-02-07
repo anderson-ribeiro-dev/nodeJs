@@ -63,11 +63,16 @@ class MongoDB extends ICrud {
     }
 
     async create(item) {
-        console.log(item)
+        // console.log(item)
         return await this._herois.create(item)
     
         // console.log('result cadastrar', resultCadastrar)
         // const lisItens = await model.find()
+    }
+
+    async read(item, skip = 0, limit = 10) {
+        return await this._herois.find(item).skip(skip).limit(limit)
+        // return this._herois.count()
     }
 }
 
