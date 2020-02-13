@@ -49,11 +49,17 @@ describe('MongoDB suite de teste', function () {
     });
 
     it('atualizar', async () => {
-        console.log("MOCK_HEROU_ID", MOCK_HEROU_ID)
+        // console.log("MOCK_HEROU_ID", MOCK_HEROU_ID)
         const result = await context.update(MOCK_HEROU_ID, {
             nome: 'Pernalonga'
         })    
        
         assert.deepEqual(result.nModified, 1)
+    });
+
+    //não se usa delete na prática
+    it('remover', async () => {
+        const result = await context.delete(MOCK_HEROU_ID)
+        assert.deepEqual(result.n, 1)
     });
 })
