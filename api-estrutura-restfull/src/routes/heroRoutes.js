@@ -1,4 +1,5 @@
 const BaseRoutes = require('./base/baseRoute')
+const Joi = require('joi')
 
 class HeroRoutes extends BaseRoutes {
     //multi bd
@@ -11,26 +12,32 @@ class HeroRoutes extends BaseRoutes {
         return {
             path: '/herois',
             method: 'GET',
+            config: {
+                validate: {
+                    //explicitar os erros
+                    failAction: (request, headers, erro) => {
+                        throw erro
+                    },
+                   //valida a requisição 
+                   //payload -> body
+                   //headers -> header
+                   //params -> na URL :id
+                   // query -> ?skip=10&limit=100
+                    query: {
+                        skip: Joi.number().integer().default(0),
+                        limit: Joi.number().integer().default(10),
+                        nome: Joi.string().min(3).max(100).default('')
+                    }
+                }
+            },
             handler: (request, headers) => {
                 try {
                     //destructuring objeto request 
                     const { skip, limit, nome } = request.query
 
-                    let query = {} 
-                    if(nome) {
-                        query.nome = nome
-                    }
-
-                    //validar se o limit for diferente de number
-                    if(isNaN(skip)) {
-                        throw Error ('O tipo do skip é incorreto!')
-                    }
+                    const query = { nome: {$regex: `.*${nome || ""}*.`} }  //$regex: `.*${nome}*.` buscar trecho de palvras
                     
-                    if(isNaN(limit)) {
-                        throw Error ('O tipo de limit é incorreto!')
-                    }
-                
-                    return this.db.read(query, parseInt(skip), parseInt(limit))
+                    return this.db.read(nome ? query : {}, skip, limit)
                 
                 } catch (error) {
                     console.log('Deu Ruim', error)

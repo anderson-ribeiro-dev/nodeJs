@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "hapi": "^18.1.0",
+    "joi": "^14.3.1",
     "mongoose": "^5.8.11",
     "pg": "^7.17.1",
     "pg-hstore": "^2.3.3",
