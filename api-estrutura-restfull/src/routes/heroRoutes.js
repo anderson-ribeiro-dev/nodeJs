@@ -1,6 +1,10 @@
 const BaseRoutes = require('./base/baseRoute')
 const Joi = require('joi')
 
+const failAction = (request, headers, erro) => {
+    throw erro
+}
+
 class HeroRoutes extends BaseRoutes {
     //multi bd
     constructor(db) {
@@ -15,9 +19,7 @@ class HeroRoutes extends BaseRoutes {
             config: {
                 validate: {
                     //explicitar os erros
-                    failAction: (request, headers, erro) => {
-                        throw erro
-                    },
+                    failAction: failAction,
                    //valida a requisição 
                    //payload -> body
                    //headers -> header
@@ -48,15 +50,35 @@ class HeroRoutes extends BaseRoutes {
         }
     }
 
-    // create() {
-    //     return {
-    //         path: '/herois',
-    //         method: 'POST',
-    //         handler: (request, headers) => {
-    //             return this.db.read()
-    //         }
-    //     }
-    // }
+    create() {
+        return {
+            path: '/herois',
+            method: 'POST',
+            config: {
+                validate: {
+                    failAction: failAction,
+                    payload: {
+                        nome: Joi.string().required().min(3).max(100),
+                        poder: Joi.string().required().min(3).max(100)
+                    }
+                }
+            },
+            handler: async (request, handler) => {
+                try {
+                    const { nome, poder } = request.payload
+                    const result = await this.db.create({ nome, poder })
+                    // console.log('result', result)
+                    return {
+                        message: "Heroi cadastrado com sucesso!",
+                        _id: result._id
+                    }
+                } catch (error) {
+                    console.log('DEU RUIM', error)
+                    return 'Internal Error!'
+                }
+            }
+        }
+    }
     
 }
 
