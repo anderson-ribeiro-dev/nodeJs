@@ -7,10 +7,26 @@ const MOCK_HEROI_CADASTRAR = {
     poder: 'Marreta Bionica'
 }
 
+const MOCK_HEROI_INICIAL = {
+    nome: 'Gavião Negro',
+    poder: 'A mira'
+}
+
+let MOCK_ID = ''
+
 //function normal, por causa do constexto do this
-describe.only('Suite de testes da API Heroes', function () {
+describe('Suite de testes da API Heroes', function () {
     this.beforeAll(async () => { //aguardar servidor subir
         app = await api //aguarda a conexão da api
+        //cadatras heroi para atualizar 
+        const result = await app.inject({
+            method: 'POST',
+            url: '/herois',
+            payload: JSON.stringify(MOCK_HEROI_INICIAL)
+        })
+
+        const dados = JSON.parse(result.payload)
+        MOCK_ID = dados._id
     })
 
     it('listar / herois', async () => {
@@ -91,5 +107,45 @@ describe.only('Suite de testes da API Heroes', function () {
         assert.notDeepStrictEqual(_id, undefined)
         assert.deepEqual(message, "Heroi cadastrado com sucesso!")
        
-    });
+    })
+
+    //patch -> objeto parcial
+    //put -> obejto inteiro
+    it('autualizar PATCH - /herois/:id', async () => {
+        const _id = MOCK_ID  
+        const expected = {
+            poder: 'Super Mira'
+        }
+        const result = await app.inject({
+            method: 'PATCH',
+            url: `/herois/${_id}`,
+            payload: JSON.stringify(expected)
+        })  
+
+        const statusCode = result.statusCode
+        const dados = JSON.parse(result.payload)
+
+        assert.ok(statusCode === 200)
+        assert.deepEqual(dados.message, 'Heroi atualizado com sucesso!')
+    
+    })
+
+    it('autualizar PATCH - /herois/:id não deve atualizar com id incorreto', async () => {
+        const _id = `5bfdb6e83f66ad3c32939fb1` 
+        const expected = {
+            poder: 'Super Mira'
+        }
+        const result = await app.inject({
+            method: 'PATCH',
+            url: `/herois/${_id}`,
+            payload: JSON.stringify(expected)
+        })  
+
+        const statusCode = result.statusCode
+        const dados = JSON.parse(result.payload)
+
+        assert.ok(statusCode === 200)
+        assert.deepEqual(dados.message, 'Não foi possivel atualizar')
+    
+    })
 })

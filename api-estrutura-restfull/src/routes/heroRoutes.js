@@ -42,7 +42,7 @@ class HeroRoutes extends BaseRoutes {
                     return this.db.read(nome ? query : {}, skip, limit)
                 
                 } catch (error) {
-                    console.log('Deu Ruim', error)
+                    console.error('Deu Ruim', error)
                     return "Erro interno no servidor!"
                 }    
 
@@ -63,7 +63,7 @@ class HeroRoutes extends BaseRoutes {
                     }
                 }
             },
-            handler: async (request, handler) => {
+            handler: async (request, headers) => {
                 try {
                     const { nome, poder } = request.payload
                     const result = await this.db.create({ nome, poder })
@@ -73,8 +73,50 @@ class HeroRoutes extends BaseRoutes {
                         _id: result._id
                     }
                 } catch (error) {
-                    console.log('DEU RUIM', error)
+                    console.error('DEU RUIM', error)
                     return 'Internal Error!'
+                }
+            }
+        }
+    }
+
+    update(){
+        return {
+            path: '/herois/{id}',
+            method: 'PATCH',
+            config: {
+                validate: {
+                    params: {
+                        id: Joi.string().required()
+                    },
+                    payload: {
+                        nome: Joi.string().min(3).max(100),
+                        poder: Joi.string().min(2).max(100)
+                    }
+                }
+            },
+            handler: async (request, headers ) => {
+                try {
+                    const { id } = request.params
+                    const { payload } = request
+
+                    //remove valores null do objeto
+                    const dadosString = JSON.stringify(payload)
+                    const dados = JSON.parse(dadosString)
+
+                    const result = await this.db.update(id, dados)
+                   
+                    if(result.nModified !== 1) return {
+                        message: 'Não foi possivel atualizar'
+                    }
+
+                    return {
+                        message: 'Heroi atualizado com sucesso!',
+                    }
+                    
+                } catch (error) {
+                    console.error('DEU RUIM', error)
+                    return 'Erro interno!'
                 }
             }
         }
