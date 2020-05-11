@@ -132,20 +132,79 @@ describe('Suite de testes da API Heroes', function () {
 
     it('autualizar PATCH - /herois/:id não deve atualizar com id incorreto', async () => {
         const _id = `5bfdb6e83f66ad3c32939fb1` 
-        const expected = {
+        const expectedPoder = {
             poder: 'Super Mira'
         }
         const result = await app.inject({
             method: 'PATCH',
             url: `/herois/${_id}`,
-            payload: JSON.stringify(expected)
+            payload: JSON.stringify(expectedPoder)
         })  
+
+        const statusCode = result.statusCode
+        const dados = JSON.parse(result.payload)
+        // console.log("dados",dados)
+        const expected = { 
+            statusCode: 412,
+            error: 'Precondition Failed',
+            message: 'Id não encontrado no banco!' 
+        }
+
+        assert.ok(statusCode === 412)
+        assert.deepEqual(dados, expected)
+    
+    })
+
+    it('remover DELETE - /herois/:id', async () => {
+        const _id = MOCK_ID
+        const result = await app.inject({
+            method: 'DELETE',
+            url: `/herois/${_id}`
+        })
 
         const statusCode = result.statusCode
         const dados = JSON.parse(result.payload)
 
         assert.ok(statusCode === 200)
-        assert.deepEqual(dados.message, 'Não foi possivel atualizar')
-    
+        assert.deepEqual(dados.message, 'Heroi removido com sucesso')
+    })
+
+    it('remover DELETE - /herois/:id nao deve remover', async () => {
+        const _id = `5bfdb6e83f66ad3c32939fb1` 
+        const result = await app.inject({
+            method: 'DELETE',
+            url: `/herois/${_id}`
+        })
+
+        const statusCode = result.statusCode
+        // console.log("statusCode", statusCode)
+        const dados = JSON.parse(result.payload)
+        const expected = { 
+            statusCode: 412,
+            error: 'Precondition Failed',
+            message: 'Id não encontrado no banco!' 
+        }
+        assert.ok(statusCode === 412)
+        assert.deepEqual(dados, expected)
+    })
+
+    it('remover DELETE - /herois/:id nao deve remover com id invalido', async () => {
+        const _id = `ID_INVALIDO` 
+        const result = await app.inject({
+            method: 'DELETE',
+            url: `/herois/${_id}`
+        })
+
+        const statusCode = result.statusCode
+        // console.log("statusCode", statusCode)
+        const dados = JSON.parse(result.payload)
+        const expected = { 
+            statusCode: 500,
+            error: 'Internal Server Error',
+            message: 'An internal server error occurred' 
+        }
+        
+        assert.ok(statusCode === 500)
+        assert.deepEqual(dados, expected)
     })
 })
